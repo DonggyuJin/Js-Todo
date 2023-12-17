@@ -1,0 +1,99 @@
+@import "reset.css";
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
+
+* {
+  font-family: "Quicksand", Helvetica, Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  background-color: #f5f5f5;
+}
+
+.header {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 70%;
+  max-width: 550px;
+  color: #ebd7d7;
+  font-size: 5.2rem;
+  font-weight: 100;
+  letter-spacing: -5px;
+}
+
+.new__todo {
+  width: 100%;
+  padding: 16px 16px 16px 60px;
+  background-color: #fff;
+  color: #000;
+  font-size: 1.2rem;
+  font-weight: 100;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.new__todo::placeholder {
+  color: #dddddd;
+  font-style: italic;
+}
+
+.main {
+  width: 70%;
+}
+
+.todo__list {
+  margin-top: 2px;
+}
+
+.todo__item {
+  display: flex;
+  align-items: center;
+  margin: 0.5px 0;
+  min-height: 50px;
+  background-color: #fff;
+  font-size: 1.2rem;
+  font-weight: 100;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.todo__toggle {
+  margin: 0 16px 0 8px;
+}
+
+input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #dddddd;
+  border-radius: 50%;
+  appearance: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+input[type="checkbox"]:checked {
+  content: "";
+  color: #72cab8;
+  border-color: #cae2dd;
+  background-image: url("../assets/check_btn.png");
+  background-repeat: no-repeat;
+  background-position: 45%;
+  background-size: 70%;
+  animation: fadeIn 1s ease;
+}
