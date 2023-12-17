@@ -1,18 +1,21 @@
-let todoItemLength = window.localStorage.length;
-
 const newTodoInput = document.getElementById("newTodo");
 const todoMainLayout = document.getElementsByClassName("todo__list")[0];
 
 const todoList = JSON.parse(window.localStorage.getItem("todo-list") || "[]");
 
-function createTodoItem(title, id, completed) {
+function createTodoItem(title, id) {
   let todoItem = document.createElement("li");
+  let todoItemBox = document.createElement("div");
   let todoTitle = document.createElement("label");
   let todoCheckBox = document.createElement("input");
+  let todoDestoryBtn = document.createElement("button");
 
   todoTitle.innerHTML = title;
   todoCheckBox.type = "checkbox";
   todoCheckBox.classList.add("todo__toggle");
+  todoDestoryBtn.classList.add("todo__destroy");
+  todoItemBox.classList.add("todo__item__box");
+
   todoCheckBox.addEventListener("change", function () {
     const targetTodoItem = todoList.find((todo) => todo.id === id);
     targetTodoItem.completed = !targetTodoItem.completed;
@@ -29,8 +32,31 @@ function createTodoItem(title, id, completed) {
     }
   });
 
-  todoItem.appendChild(todoCheckBox);
-  todoItem.appendChild(todoTitle);
+  todoItem.addEventListener("mouseover", function () {
+    todoDestoryBtn.innerHTML = "X";
+  });
+  todoItem.addEventListener("mouseout", function () {
+    todoDestoryBtn.innerHTML = "";
+  });
+  todoItem.addEventListener("click", function (e) {
+    const filteredTodoList = todoList.filter(
+      (todo) => todo.id.toString() !== e.target.parentNode.dataset.id
+    );
+
+    window.localStorage.setItem("todo-list", JSON.stringify(filteredTodoList));
+
+    const todoMainLayoutItem = todoMainLayout.querySelectorAll("li");
+    todoMainLayoutItem.forEach((li) => {
+      if (li.dataset.id === e.target.parentNode.dataset.id) {
+        li.remove();
+      }
+    });
+  });
+
+  todoItemBox.appendChild(todoCheckBox);
+  todoItemBox.appendChild(todoTitle);
+  todoItem.appendChild(todoItemBox);
+  todoItem.appendChild(todoDestoryBtn);
 
   todoItem.classList.add("todo__item");
   todoItem.dataset.id = id;
@@ -39,7 +65,7 @@ function createTodoItem(title, id, completed) {
 
 function initReadTodoItem() {
   todoList.forEach((todo) => {
-    createTodoItem(todo.title, todo.id, todo.completed);
+    createTodoItem(todo.title, todo.id);
   });
 }
 
@@ -58,20 +84,9 @@ newTodoInput.addEventListener("keyup", function (e) {
 
     window.localStorage.setItem("todo-list", JSON.stringify(todoList));
 
-    createTodoItem(e.target.value, nowDateTime, false);
+    createTodoItem(e.target.value, nowDateTime);
 
     e.target.value = "";
+    todoItem = {};
   }
 });
-
-// todoMainLayout.addEventListener("click", function (e) {
-//   const todoId = e.target.dataset.id;
-
-//   const targetTodoItem = todoList.find((todo) => todo.id.toString() === todoId);
-
-//   if (targetTodoItem) {
-//     targetTodoItem.completed = !targetTodoItem.completed;
-
-//     window.localStorage.setItem("todo-list", JSON.stringify(todoList));
-//   }
-// });
