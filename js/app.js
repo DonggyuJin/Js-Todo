@@ -4,10 +4,17 @@ const todoItemLength = document.getElementById("todo__length");
 const todoFooter = document.getElementsByClassName("footer")[0];
 const todoToggleBtn = document.getElementById("todoToggleAll");
 const todoFilterBtn = document.getElementsByClassName("todo__filter")[0];
+const todoClearBtn = document.getElementsByClassName(
+  "todo__completed__clear"
+)[0];
 
 let todoList = JSON.parse(window.localStorage.getItem("todo-list") || "[]");
+let todoToggleAll =
+  todoList.filter((todo) => todo.completed === true).length === todoList.length
+    ? true
+    : false;
 
-function createTodoItem(title, id) {
+function createTodoItem(title, id, completed) {
   let todoItem = document.createElement("li");
   let todoItemBox = document.createElement("div");
   let todoTitle = document.createElement("label");
@@ -16,26 +23,22 @@ function createTodoItem(title, id) {
 
   todoTitle.innerHTML = title;
   todoCheckBox.type = "checkbox";
+  todoCheckBox.checked = completed;
   todoCheckBox.classList.add("todo__toggle");
   todoDestoryBtn.classList.add("todo__destroy");
   todoItemBox.classList.add("todo__item__box");
+
+  checkTodoTitle(todoCheckBox.checked, todoTitle);
 
   todoCheckBox.addEventListener("change", function () {
     const targetTodoItem = todoList.find((todo) => todo.id === id);
     targetTodoItem.completed = !targetTodoItem.completed;
     window.localStorage.setItem("todo-list", JSON.stringify(todoList));
 
-    if (this.checked) {
-      todoTitle.style.textDecoration = "line-through";
-      todoTitle.style.color = "#cccccc";
-      todoTitle.style.animation = "fadeIn 1s ease";
-    } else {
-      todoTitle.style.textDecoration = "";
-      todoTitle.style.color = "#000";
-      todoTitle.style.animation = "";
-    }
-
+    checkTodoTitle(this.checked, todoTitle);
     countItemLeft();
+    showClearBtn();
+    checkOrUncheckAllTodoList();
   });
 
   todoItem.addEventListener("mouseover", function () {
@@ -61,6 +64,7 @@ function createTodoItem(title, id) {
     });
 
     hideFooter();
+    checkAllOr();
   });
 
   todoItemBox.appendChild(todoCheckBox);
@@ -77,8 +81,9 @@ function createTodoItem(title, id) {
 
 function initReadTodoItem() {
   hideFooter();
+  showClearBtn();
   todoList.forEach((todo) => {
-    createTodoItem(todo.title, todo.id);
+    createTodoItem(todo.title, todo.id, todo.completed);
   });
 }
 
@@ -99,6 +104,18 @@ function countItemLeft() {
   ).length;
 }
 
+function checkTodoTitle(check, title) {
+  if (check) {
+    title.style.textDecoration = "line-through";
+    title.style.color = "#cccccc";
+    title.style.animation = "fadeIn 1s ease";
+  } else {
+    title.style.textDecoration = "";
+    title.style.color = "#000";
+    title.style.animation = "";
+  }
+}
+
 newTodoInput.addEventListener("keyup", function (e) {
   if (e.key === "Enter") {
     const nowDateTime = new Date().getTime();
@@ -112,15 +129,19 @@ newTodoInput.addEventListener("keyup", function (e) {
 
     window.localStorage.setItem("todo-list", JSON.stringify(todoList));
 
-    createTodoItem(e.target.value, nowDateTime);
+    createTodoItem(e.target.value, nowDateTime, false);
 
     e.target.value = "";
   }
 });
 
+const todoMainLayoutItem = todoMainLayout.querySelectorAll("li");
+
 todoToggleBtn.addEventListener("click", function (e) {
+  todoToggleAll = !todoToggleAll;
+
   todoList.forEach((todo) => {
-    todo.completed = !todo.completed;
+    todo.completed = todoToggleAll;
   });
   window.localStorage.setItem("todo-list", JSON.stringify(todoList));
 
@@ -129,28 +150,17 @@ todoToggleBtn.addEventListener("click", function (e) {
   todoMainLayoutItem.forEach((item) => {
     let itemCheckBtn = item.children[0].children[0];
     let itemTitle = item.children[0].children[1];
-    itemCheckBtn.checked = !itemCheckBtn.checked;
-    if (itemCheckBtn.checked === true) {
-      e.target.labels[0].style.color = "#4d4d4d";
+    itemCheckBtn.checked = todoToggleAll;
 
-      itemTitle.style.textDecoration = "line-through";
-      itemTitle.style.color = "#cccccc";
-      itemTitle.style.animation = "fadeIn 1s ease";
-    } else {
-      e.target.labels[0].style.color = "#e6e6e6";
-
-      itemTitle.style.textDecoration = "";
-      itemTitle.style.color = "#000";
-      itemTitle.style.animation = "";
-    }
+    showToggleBtn();
+    checkTodoTitle(todoToggleAll, itemTitle);
   });
 
   countItemLeft();
+  showClearBtn();
 });
 
 todoFilterBtn.addEventListener("click", function (e) {
-  console.log(e);
-
   if (e.target.tagName === "A") {
     e.target.parentNode.parentNode.childNodes.forEach((child) => {
       child.className = "";
@@ -159,14 +169,12 @@ todoFilterBtn.addEventListener("click", function (e) {
 
     switch (e.target.textContent) {
       case "Active":
-        console.log("active");
-        filterTodoList(true);
-        break;
-      case "Completed":
         filterTodoList(false);
         break;
+      case "Completed":
+        filterTodoList(true);
+        break;
       default:
-        const todoMainLayoutItem = todoMainLayout.querySelectorAll("li");
         todoMainLayoutItem.forEach((item) => (item.style.display = "flex"));
     }
   }
@@ -174,15 +182,66 @@ todoFilterBtn.addEventListener("click", function (e) {
 
 function filterTodoList(completed) {
   const todoMainLayoutItem = todoMainLayout.querySelectorAll("li");
-  todoList
+  const filteredTodoList = todoList
     .filter((todo) => todo.completed === completed)
-    .forEach((todo) => {
-      todoMainLayoutItem.forEach((item) => {
-        if (item.dataset.id === todo.id.toString()) {
-          item.style.display = "none";
-        } else {
-          item.style.display = "flex";
-        }
-      });
-    });
+    .map((todo) => todo.id.toString());
+
+  todoMainLayoutItem.forEach((item) => {
+    if (filteredTodoList.includes(item.dataset.id)) {
+      item.style.display = "flex";
+    } else {
+      item.style.display = "none";
+    }
+  });
 }
+
+function checkOrUncheckAllTodoList() {
+  const completedTodoListLength = todoList.filter(
+    (todo) => todo.completed === true
+  ).length;
+
+  if (todoList.length === 0 || todoList.length > completedTodoListLength) {
+    todoToggleAll = false;
+  } else if (todoList.length === completedTodoListLength) {
+    todoToggleAll = true;
+  }
+  showToggleBtn();
+}
+
+function showClearBtn() {
+  if (todoList.filter((todo) => todo.completed === true).length > 0) {
+    todoClearBtn.style.display = "block";
+  } else {
+    todoClearBtn.style.display = "none";
+  }
+}
+
+function showToggleBtn() {
+  if (todoToggleAll) {
+    todoToggleBtn.nextElementSibling.style.color = "#4d4d4d";
+  } else {
+    todoToggleBtn.nextElementSibling.style.color = "#e6e6e6";
+  }
+}
+
+todoClearBtn.addEventListener("click", function (e) {
+  const clearedTodoList = todoList.filter((todo) => todo.completed === false);
+
+  todoList = [...clearedTodoList];
+  window.localStorage.setItem("todo-list", JSON.stringify(todoList));
+
+  todoItemLength.textContent = todoList.length;
+
+  const todoMainLayoutItem = todoMainLayout.querySelectorAll("li");
+  const cleaeredTodoListId = clearedTodoList.map((todo) => todo.id.toString());
+
+  todoMainLayoutItem.forEach((li) => {
+    if (cleaeredTodoListId.includes(li.dataset.id) === false) {
+      li.remove();
+    }
+  });
+
+  hideFooter();
+  showClearBtn();
+  checkOrUncheckAllTodoList();
+});

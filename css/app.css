@@ -17,7 +17,7 @@ body {
   flex-flow: column nowrap;
   align-items: center;
   width: 70%;
-  max-width: 550px;
+  max-width: 600px;
   color: #ebd7d7;
   font-size: 5.2rem;
   font-weight: 100;
@@ -42,6 +42,7 @@ body {
 .main {
   position: relative;
   width: 70%;
+  max-width: 600px;
 }
 
 .todo__toggle__all {
@@ -114,10 +115,12 @@ body {
 }
 
 .footer {
+  position: relative;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   width: 70%;
-  padding: 10px 12px;
+  max-width: 600px;
+  padding: 12px;
   background-color: #fff;
   color: #777777;
   font-size: 0.8rem;
@@ -126,7 +129,10 @@ body {
 }
 
 .todo__filter {
+  position: absolute;
   display: flex;
+  left: 50%;
+  transform: translate(-56%, 0);
 }
 
 .todo__filter > li {
@@ -136,6 +142,19 @@ body {
   border-radius: 4px;
 }
 
+.todo__filter > li:hover {
+  border: 1px solid rgba(175, 47, 47, 0.1);
+}
+
 .todo__filter__selected {
   border: 1px solid rgba(175, 47, 47, 0.2) !important;
+}
+
+.todo__completed__clear {
+  position: absolute;
+  right: 20px;
+}
+
+.todo__completed__clear:hover {
+  text-decoration: underline;
 }
