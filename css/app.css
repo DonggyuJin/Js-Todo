@@ -40,7 +40,40 @@ body {
 }
 
 .main {
+  position: relative;
   width: 70%;
+}
+
+.todo__toggle__all {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: none;
+  right: 100%;
+  bottom: 100%;
+}
+
+.todo__toggle__all + label {
+  width: 60px;
+  height: 34px;
+  position: absolute;
+  color: #e6e6e6;
+  top: -48px;
+  left: -10px;
+  transform: rotate(90deg);
+}
+
+.todo__toggle__all + label::before {
+  content: "❯";
+  font-size: 1.3rem;
+
+  padding: 10px 27px;
+}
+
+.todo__toggle__all:checked {
+  content: "";
+  background-image: none;
 }
 
 .todo__list {
@@ -69,25 +102,40 @@ body {
 }
 
 .todo__destroy {
-  margin-right: 12px;
+  margin-right: 8px;
+  padding: 0px 6px;
+  color: #cc9a9a;
   font-size: 1rem;
+  font-weight: 500;
 }
 
-input[type="checkbox"] {
-  width: 24px;
-  height: 24px;
-  border: 1px solid #dddddd;
-  border-radius: 50%;
-  appearance: none;
+.todo__destroy:hover {
+  color: #af5b5e;
 }
 
-input[type="checkbox"]:checked {
-  content: "";
-  color: #72cab8;
-  border-color: #cae2dd;
-  background-image: url("../assets/check_btn.png");
-  background-repeat: no-repeat;
-  background-position: 45%;
-  background-size: 70%;
-  animation: fadeIn 1s ease;
+.footer {
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+  padding: 10px 12px;
+  background-color: #fff;
+  color: #777777;
+  font-size: 0.8rem;
+  font-weight: 100;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.todo__filter {
+  display: flex;
+}
+
+.todo__filter > li {
+  margin: 0px 4px;
+  padding: 1px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.todo__filter__selected {
+  border: 1px solid rgba(175, 47, 47, 0.2) !important;
 }

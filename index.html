@@ -17,9 +17,28 @@
       />
     </section>
     <section class="main">
+      <input id="todoToggleAll" class="todo__toggle__all" type="button" />
+      <label for="todoToggleAll"></label>
       <ul class="todo__list"></ul>
     </section>
-    <section class="footer"></section>
+    <section class="footer">
+      <span class="todo__count">
+        <strong id="todo__length"></strong>
+        item left
+      </span>
+      <ul class="todo__filter">
+        <li class="todo__filter__selected">
+          <a href="#/">All</a>
+        </li>
+        <li>
+          <a href="#/active">Active</a>
+        </li>
+        <li>
+          <a href="#/completed">Completed</a>
+        </li>
+      </ul>
+      <button class="todo__completed__clear">Clear completed</button>
+    </section>
   </body>
   <script src="js/app.js" type="module"></script>
 </html>

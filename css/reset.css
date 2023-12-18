@@ -61,3 +61,22 @@ input {
     opacity: 1;
   }
 }
+
+input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #dddddd;
+  border-radius: 50%;
+  appearance: none;
+}
+
+input[type="checkbox"]:checked {
+  content: "";
+  color: #72cab8;
+  border-color: #cae2dd;
+  background-image: url("../assets/check_btn.png");
+  background-repeat: no-repeat;
+  background-position: 45%;
+  background-size: 70%;
+  animation: fadeIn 1s ease;
+}
